@@ -1,6 +1,6 @@
 {
   "name": "node.im",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "a tiny IM based on Node.js",
   "main": "index.js",
   "scripts": {
@@ -21,5 +21,11 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/turingou/node.im/issues"
+  },
+  "dependencies": {
+    "evilscan": "*",
+    "my-local-ip": "*",
+    "socket.io": "*",
+    "consoler": "*"
   }
 }
