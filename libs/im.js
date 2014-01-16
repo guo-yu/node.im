@@ -1,47 +1,51 @@
-var evilscan = require('evilscan'),
+var io = require('socket.io'),
+    evilscan = require('evilscan'),
     consoler = require('consoler'),
     localIP = require('my-local-ip')(),
     utils = require('./utils'),
     Server = require('./server');
 
-var IM = function() {
-    this.port = 7654
+var IM = function(nickname) {
+    this.nickname = nickname || '匿名';
+    this.port = 7654;
+    this.clients = [];
     this.server = new Server(this.port);
 };
 
-IM.prototype.search = function() {
+IM.prototype.search = function(callback) {
     var self = this;
-    var scanner = new evilscan({
+    this.scanner = new evilscan({
         target: utils.target(localIP),
-        port: self.port,
+        port: this.port,
         status: 'O', // Timeout, Refused, Open, Unreachable
         banner: true
     }, function() {}); // add a blank callback cause evilscan's bug
 
-    self.clients = [];
-
-    scanner.on('result', function(client) {
+    this.scanner.on('result', function(client) {
         self.clients.push(client);
     });
 
-    scanner.on('error', function(err) {
-        // throw new Error(data.toString());
-    });
-
-    scanner.on('done', function() {
-        consoler.success('搜索完成');
-        consoler.success(
-            self.clients.length > 0 ? 
-            '找到 ' + self.clients.length + ' 个在线成员' :
-            '你附近还没有人在线'
-        )
-    });
-
-    scanner.run();
+    this.scanner.on('error', this.errors);
+    this.scanner.on('done', callback);
+    this.scanner.run();
 }
 
-IM.prototype.send = function() {
+IM.prototype.connect = function(client, callback) {
+    if (client.status !== 'open') return callback(new Error('抱歉，连接失败'));
+    // this.connector = io.connect('http://' + client.ip + ':' + client.port);
+    // console.log(this.connector);
+};
+
+IM.prototype.send = function(msg) {
     if (!this.server) return false;
+    if (!msg) return false;
+    var self = this;
+    self.server.sockets.on('connection', function(socket) {
+        socket.emit('message', msg);
+        socket.on('reply', function(reply) {
+            console.log(reply);
+        });
+    });
 };
 
 IM.prototype.boardcast = function() {
@@ -50,6 +54,25 @@ IM.prototype.boardcast = function() {
 
 IM.prototype.fetch = function() {
     if (!this.server) return false;
+};
+
+IM.prototype.init = function(callback) {
+    var self = this;
+    if (!self.server) return false;
+    self.search(function() {
+        consoler.success(
+            self.clients.length > 0 ?
+            '搜索完成, 找到 ' + self.clients.length + ' 个在线成员' :
+            '搜索完成, 你附近还没有人在线'
+        );
+        consoler.success('开始尝试建立链接');
+        console.log(self.clients[0]);
+        self.connect(self.clients[0]);
+    });
+};
+
+IM.prototype.errors = function(err) {
+    return consoler.error(err.toString());
 };
 
 exports = module.exports = IM;

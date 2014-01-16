@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": "./bin/cli",
   "repository": {
     "type": "git",
     "url": "git://github.com/turingou/node.im.git"
@@ -25,7 +26,7 @@
   "dependencies": {
     "evilscan": "*",
     "my-local-ip": "*",
-    "socket.io": "*",
+    "socket.io": "0.9.16",
     "consoler": "*"
   }
 }
