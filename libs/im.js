@@ -1,4 +1,4 @@
-var io = require('socket.io'),
+var io = require('socket.io-client'),
     evilscan = require('evilscan'),
     consoler = require('consoler'),
     localIP = require('my-local-ip')(),
@@ -32,8 +32,16 @@ IM.prototype.search = function(callback) {
 
 IM.prototype.connect = function(client, callback) {
     if (client.status !== 'open') return callback(new Error('抱歉，连接失败'));
-    // this.connector = io.connect('http://' + client.ip + ':' + client.port);
-    // console.log(this.connector);
+    var socket = io.connect('http://' + client.ip + ':' + client.port);
+    socket.on('connect', function() {
+        socket.on('event', function(data) {
+            // console.log(data);
+        });
+        socket.on('disconnect', function() {
+            console.log('disconnected!!!!');
+        });
+    });
+    this.connector = socket;
 };
 
 IM.prototype.send = function(msg) {
