@@ -1,6 +1,6 @@
 ## node.im ![npm](https://badge.fury.io/js/node.im.png)
 
-a tiny IM based on Node.js
+a tiny peer to peer IM based on Node.js
 
 ### Installation
 ````
