@@ -30,28 +30,24 @@ IM.prototype.search = function(callback) {
     this.scanner.run();
 }
 
-IM.prototype.connect = function(client, callback) {
-    if (client.status !== 'open') return callback(new Error('抱歉，连接失败'));
+IM.prototype.connect = function(client) {
+    if (client.status !== 'open') throw new Error('抱歉，连接失败，请稍后再试');
     var socket = io.connect('http://' + client.ip + ':' + client.port);
-    socket.on('connect', function() {
-        socket.on('event', function(data) {
-            // console.log(data);
-        });
-        socket.on('disconnect', function() {
-            console.log('disconnected!!!!');
-        });
+    socket.on('hi', function(hi) {
+        consoler.success('连接成功 => ' + client.ip);
+        consoler.success('消息: ' + hi);
     });
     this.connector = socket;
 };
 
-IM.prototype.send = function(msg) {
+IM.prototype.serve = function() {
     if (!this.server) return false;
-    if (!msg) return false;
     var self = this;
     self.server.sockets.on('connection', function(socket) {
-        socket.emit('message', msg);
+        consoler.success('[server]: 已经建立链接');
+        socket.emit('hi', '你好');
         socket.on('reply', function(reply) {
-            console.log(reply);
+            consoler.success('> Reply: ' + reply);
         });
     });
 };
@@ -67,15 +63,16 @@ IM.prototype.fetch = function() {
 IM.prototype.init = function(callback) {
     var self = this;
     if (!self.server) return false;
+    consoler.loading('正在搜索在线成员，请稍等...');
     self.search(function() {
         consoler.success(
             self.clients.length > 0 ?
             '搜索完成, 找到 ' + self.clients.length + ' 个在线成员' :
             '搜索完成, 你附近还没有人在线'
         );
-        consoler.success('开始尝试建立链接');
-        console.log(self.clients[0]);
+        consoler.success('开始尝试建立链接 => ' + self.clients[0].ip);
         self.connect(self.clients[0]);
+        self.serve();
     });
 };
 
