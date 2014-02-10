@@ -14,6 +14,6 @@ rl.on('close', function() {
 });
 
 exports = module.exports = function() {
-    var im = new IM(process.argv[2]);
+    var im = new IM(process.argv[2],process.argv[3]);
     return im.init(rl);
 };

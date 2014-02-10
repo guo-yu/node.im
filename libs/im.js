@@ -5,9 +5,9 @@ var io = require('socket.io-client'),
     utils = require('./utils'),
     Server = require('./server');
 
-var IM = function(nickname) {
+var IM = function(nickname, port) {
     this.nickname = nickname || '匿名';
-    this.port = 7654;
+    this.port = port || 7654;
     this.clients = [];
     this.server = new Server(this.port);
 };
@@ -16,7 +16,7 @@ IM.prototype.search = function(callback) {
     var self = this;
     this.scanner = new evilscan({
         target: utils.target(localIP),
-        port: this.port,
+        port: this.port, // default by 7654/7653
         status: 'O', // Timeout, Refused, Open, Unreachable
         banner: true
     }, function() {}); // add a blank callback cause evilscan's bug
@@ -32,30 +32,42 @@ IM.prototype.search = function(callback) {
 
 IM.prototype.connect = function(client, rl) {
     if (client.status !== 'open') return consoler.error('抱歉，连接失败，请稍后再试');
+    var self = this;
     var socket = io.connect('http://' + client.ip + ':' + client.port);
-    socket.on('hi', function(user) {
-        consoler.success('与' + user + '@' + client.ip + '对话: ');
-        // open dialog window
-        rl.setPrompt('> ');
-        rl.prompt();
-        rl.on('line', function(line) {
-            var text = line.trim();
-            if (text === '') return false;
-            if (text === 'exit' || text === 'q') return rl.close();
-            socket.emit('message', text);
-            rl.prompt();
-        });
+    socket.on('message', function(user) {
+        console.log(user.nickname + ': ' + user.message);
     });
-    this.connector = socket;
+    // open dialog window
+    rl.setPrompt('', 0);
+    rl.prompt();
+    rl.on('line', function(line) {
+        var text = line.trim();
+        if (text === '') return false;
+        if (text === 'exit' || text === 'q') return rl.close();
+        socket.emit('message', {
+            nickname: self.nickname,
+            message: text
+        });
+        return rl.prompt();
+    });
 };
 
 IM.prototype.serve = function() {
     if (!this.server) return false;
     var self = this;
     self.server.sockets.on('connection', function(socket) {
-        socket.emit('hi', self.nickname);
-        socket.on('message', function(msg) {
-            return console.log(self.nickname + ' > 你好，我现在不在，但是已经收到你的消息了: ' + msg);
+        // handshake
+        socket.emit('message', {
+            nickname: self.nickname,
+            message: 'hi'
+        });
+        // reply message
+        socket.on('message', function(user) {
+            // auto-reply
+            return socket.emit('message', {
+                nickname: self.nickname,
+                message: '你好，我现在不在，稍后再联系你啦'
+            });
         });
     });
 };
