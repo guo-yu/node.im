@@ -1,10 +1,19 @@
 var consoler = require('consoler'),
-    IM = require('./im'),
-    im = new IM;
+    readline = require('readline'),
+    sys = require('../package.json'),
+    IM = require('./im');
+
+var rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+rl.on('close', function() {
+    consoler.success('Bye ~');
+    return process.exit(0);
+});
 
 exports = module.exports = function() {
-    var command = process.argv[2];
-    if (!command) return im.init();
-    consoler.success(command);
-    return false;
+    var im = new IM(process.argv[2]);
+    return im.init(rl);
 };

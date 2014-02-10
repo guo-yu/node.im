@@ -24,10 +24,10 @@
     "url": "https://github.com/turingou/node.im/issues"
   },
   "dependencies": {
-    "evilscan": "*",
-    "my-local-ip": "*",
+    "consoler": "*",
+    "evilscan": "~0.0.9",
+    "my-local-ip": "1.0.0",
     "socket.io": "0.9.16",
-    "socket.io-client": "*",
-    "consoler": "*"
+    "socket.io-client": "~0.9.16"
   }
 }

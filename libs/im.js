@@ -30,12 +30,21 @@ IM.prototype.search = function(callback) {
     this.scanner.run();
 }
 
-IM.prototype.connect = function(client) {
-    if (client.status !== 'open') throw new Error('抱歉，连接失败，请稍后再试');
+IM.prototype.connect = function(client, rl) {
+    if (client.status !== 'open') return consoler.error('抱歉，连接失败，请稍后再试');
     var socket = io.connect('http://' + client.ip + ':' + client.port);
-    socket.on('hi', function(hi) {
-        consoler.success('连接成功 => ' + client.ip);
-        consoler.success('消息: ' + hi);
+    socket.on('hi', function(user) {
+        consoler.success('与' + user + '@' + client.ip + '对话: ');
+        // open dialog window
+        rl.setPrompt('> ');
+        rl.prompt();
+        rl.on('line', function(line) {
+            var text = line.trim();
+            if (text === '') return false;
+            if (text === 'exit' || text === 'q') return rl.close();
+            socket.emit('message', text);
+            rl.prompt();
+        });
     });
     this.connector = socket;
 };
@@ -44,10 +53,9 @@ IM.prototype.serve = function() {
     if (!this.server) return false;
     var self = this;
     self.server.sockets.on('connection', function(socket) {
-        consoler.success('[server]: 已经建立链接');
-        socket.emit('hi', '你好');
-        socket.on('reply', function(reply) {
-            consoler.success('> Reply: ' + reply);
+        socket.emit('hi', self.nickname);
+        socket.on('message', function(msg) {
+            return console.log(self.nickname + ' > 你好，我现在不在，但是已经收到你的消息了: ' + msg);
         });
     });
 };
@@ -60,7 +68,7 @@ IM.prototype.fetch = function() {
     if (!this.server) return false;
 };
 
-IM.prototype.init = function(callback) {
+IM.prototype.init = function(rl, callback) {
     var self = this;
     if (!self.server) return false;
     consoler.loading('正在搜索在线成员，请稍等...');
@@ -71,9 +79,10 @@ IM.prototype.init = function(callback) {
             '搜索完成, 你附近还没有人在线'
         );
         consoler.success('开始尝试建立链接 => ' + self.clients[0].ip);
-        self.connect(self.clients[0]);
+        self.connect(self.clients[0], rl);
         self.serve();
     });
+    return this;
 };
 
 IM.prototype.errors = function(err) {
