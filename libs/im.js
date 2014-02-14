@@ -6,7 +6,7 @@ var io = require('socket.io-client'),
     Server = require('./server');
 
 var IM = function(nickname, port) {
-    this.nickname = nickname || '匿名';
+    this.nickname = nickname || 'Anonymous';
     this.port = port || 7654;
     this.clients = [];
     this.server = new Server(this.port);
