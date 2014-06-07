@@ -1,1 +1,1 @@
-exports = module.exports = require('./libs/im');
+module.exports = require('./libs/im');
