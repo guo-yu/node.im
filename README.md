@@ -1,19 +1,11 @@
-## node.im ![npm](https://badge.fury.io/js/node.im.png)
+## NodeIM ![npm](https://badge.fury.io/js/node.im.png)
 
-a tiny peer to peer IM based on Node.js
+基于 Node.js 与 LeanCloud 的命令行聊天工具
 
 ### Installation
-````
-$ [sudo] npm install node.im -g
-````
-
-### Example
-````javascript
-var node.im = require('node.im');
-````
-
-### API
-check this file: `index.js`
+```bash
+$ [sudo] npm install -g node.im
+```
 
 ### Contributing
 - Fork this repo
