@@ -1,3 +1,4 @@
+var debug = require('debug')('node.im:Messager');
 var AVChatClient = require('lean-cloud-chat');
 var configs = require('../configs');
 
@@ -33,10 +34,12 @@ function sendMessage(peerId, message, callback) {
     .send(message, peerId)
     .then(
       function(){
+        debug('Message Send Successful ID: %s', peerId);
         if (isFunction(callback))
           return callback(null);
       },
       function(){
+        debug('Message Send Fail ID: %s', peerId);
         if (isFunction(callback))
           return callback(new Error('Node.im.Send(); Message send fail'))
       }
@@ -82,11 +85,13 @@ function connectService(callback) {
     .open()
     .then(
       function() {
+        debug('Connect Successful');
         // Connect Successful
         if (isFunction(callback))
           return callback(null, this.IM);
       },
       function(){
+        debug('Connect Fail');
         // Connect fail
         if (isFunction(callback))
           return callback(new Error('Node.im.connectService(); Connect fail'));
@@ -100,6 +105,7 @@ function quitMessager(callback) {
 
   // Byebye
   this.IM.close().then(function(){
+    debug('Byebye, Good night');
     if (isFunction(callback))
       return callback();
   });
