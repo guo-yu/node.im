@@ -24,9 +24,10 @@
     "url": "https://github.com/turingou/node.im/issues"
   },
   "dependencies": {
+    "avoscloud-sdk": "^0.4.4",
     "colors": "^1.0.3",
     "debug": "^2.1.0",
-    "avoscloud-sdk": "^0.4.4",
+    "fsplus": "^0.1.0",
     "lean-cloud-chat": "^1.0.1"
   }
 }

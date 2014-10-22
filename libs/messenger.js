@@ -1,6 +1,5 @@
 var debug = require('debug')('Node.im:Messager');
 var AVChatClient = require('lean-cloud-chat');
-var configs = require('../configs');
 
 module.exports = Messenger;
 
