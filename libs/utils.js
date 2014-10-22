@@ -7,6 +7,7 @@ exports.userHome = userHome;
 exports.loadProfile = loadProfile;
 exports.createProfile = createProfile;
 exports.createRandomPassword = createRandomPassword;
+exports.isFunction = isFunction;
 
 function userHome() {
   return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
@@ -39,4 +40,8 @@ function createProfile(user, password) {
 
 function createRandomPassword() {
   return ((new Date()).getTime() + (Math.random() * 10)).toString();
+}
+
+function isFunction(callback) {
+  return callback && typeof(callback) === 'function';
 }

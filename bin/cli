@@ -11,9 +11,14 @@ if (!NodeIM.profile) {
   return UI.signup(function(err, user) {
     if (err)
       return UI.alert(err);
-
-    UI.initMessager(user);
+    initNodeIm();
   });
 }
 
-return UI.initMessager(NodeIM.profile);
+initNodeIm()
+
+function initNodeIm() {
+  NodeIM.ready(function(){
+    UI.initMessager(NodeIM.profile);
+  });
+}

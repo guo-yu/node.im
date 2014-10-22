@@ -1,4 +1,5 @@
 var colors = require('colors');
+var inquirer = require("inquirer");
 var readline = require('readline');
 var debug = require('debug')('Node.im:UI');
 var NodeIM = require('../node.im');
@@ -42,6 +43,14 @@ function initMessager(profile) {
   console.log()
   console.log(indent + 'Node.im'.green + ' 欢迎回来 %s', profile.username);
   console.log()
+
+  NodeIM.messenger.on('message', function(data) {
+    console.log(data);
+  });
+
+  this.rl.on('line', function (str) {
+    NodeIM.messenger.send(profile.objectId, str);
+  });
 }
 
 function completer() {

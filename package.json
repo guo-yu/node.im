@@ -28,6 +28,7 @@
     "colors": "^1.0.3",
     "debug": "^2.1.0",
     "fsplus": "^0.1.0",
+    "inquirer": "^0.8.0",
     "lean-cloud-chat": "^1.0.1"
   }
 }

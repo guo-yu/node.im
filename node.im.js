@@ -12,6 +12,8 @@ function NodeIM(configs) {
   if (configs.LeanCloud && (!configs.LeanCloud.appId || !configs.LeanCloud.appKey))
     throw new Error('NodeIM.initInstance(); appId and appKey required');
 
+  var self = this;
+
   this.configs = configs;
   this.profile = utils.loadProfile();
 
@@ -23,11 +25,19 @@ function NodeIM(configs) {
   this.database = LeanCloud;
   this.messenger = new Messenger(this.profile.objectId);
   this.messenger.config('appId', this.configs.LeanCloud.appId);
-  this.messenger.init();
+  this.messenger.init(function(){
+    if (self.onReady) self.onReady();
+  });
 }
 
 NodeIM.prototype.signup = Signup;
 NodeIM.prototype.signin = Signin;
+NodeIM.prototype.ready = onReady;
+
+function onReady(fn) {
+  if (!utils.isFunction(fn)) return;
+  this.onReady = fn;
+}
 
 function Signup(newbie, callback) {
   var self = this;

@@ -1,5 +1,6 @@
 var debug = require('debug')('Node.im:Messager');
 var AVChatClient = require('lean-cloud-chat');
+var utils = require('./utils');
 
 module.exports = Messenger;
 
@@ -20,11 +21,12 @@ Messenger.prototype.init = initMessager;
 Messenger.prototype.send = sendMessage;
 Messenger.prototype.config = configMessager;
 Messenger.prototype.connectService = connectService;
+Messenger.prototype.on = eventListener;
 Messenger.prototype.quit = quitMessager;
 Messenger.prototype.exit = quitMessager;
 
 function sendMessage(peerId, message, callback) {
-  if (this.IM)
+  if (!this.IM)
     return;
   if (!peerId || !message)
     return;
@@ -34,15 +36,20 @@ function sendMessage(peerId, message, callback) {
     .then(
       function(){
         debug('Message Send Successful ID: %s', peerId);
-        if (isFunction(callback))
+        if (utils.isFunction(callback))
           return callback(null);
       },
       function(){
         debug('Message Send Fail ID: %s', peerId);
-        if (isFunction(callback))
+        if (utils.isFunction(callback))
           return callback(new Error('Node.im.Send(); Message send fail'))
       }
     );
+}
+
+function eventListener(eventName, callback) {
+  if (!this.IM) return;
+  return this.IM.on(eventName, callback);
 }
 
 function configMessager(key, value) {
@@ -86,13 +93,13 @@ function connectService(callback) {
       function() {
         debug('Connect Successful');
         // Connect Successful
-        if (isFunction(callback))
+        if (utils.isFunction(callback))
           return callback(null, this.IM);
       },
       function(){
         debug('Connect Fail');
         // Connect fail
-        if (isFunction(callback))
+        if (utils.isFunction(callback))
           return callback(new Error('Node.im.connectService(); Connect fail'));
       }
     );
@@ -105,11 +112,7 @@ function quitMessager(callback) {
   // Byebye
   this.IM.close().then(function(){
     debug('Byebye, Good night');
-    if (isFunction(callback))
+    if (utils.isFunction(callback))
       return callback();
   });
-}
-
-function isFunction(callback) {
-  return callback && typeof(callback) === 'function';
 }
