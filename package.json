@@ -27,6 +27,7 @@
     "avoscloud-sdk": "^0.4.4",
     "consoler": "*",
     "evilscan": "~0.0.9",
+    "lean-cloud-chat": "^1.0.1",
     "my-local-ip": "1.0.0",
     "socket.io": "0.9.16",
     "socket.io-client": "~0.9.16"
