@@ -1,9 +1,11 @@
 var fs = require('fsplus');
+var path = require('path');
 var debug = require('debug')('Node.im');
 var LeanCloud = require('avoscloud-sdk').AV;
 var Messenger = require('./libs/messenger');
 var utils = require('./libs/utils');
 var configs = require('./configs');
+var profilePath = path.join(utils.userHome(), '.nodeimrc');
 
 module.exports = initNodeIm;
 
@@ -72,7 +74,6 @@ function Signin(callback) {
 }
 
 function loadProfile() {
-  var profilePath = path.join(utils.userHome(), '.nodeimrc');
   debug('Loading Profile from %s', profilePath);
 
   if (!fs.existsSync(profilePath))
@@ -86,8 +87,12 @@ function loadProfile() {
   }
 }
 
-function createProfile() {
-
+function createProfile(user) {
+  try {
+    fs.writeJSON(profilePath, user);
+  } catch (err) {
+    throw err;
+  }
 }
 
 function createRandomPassword() {
