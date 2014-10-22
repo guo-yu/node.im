@@ -4,7 +4,7 @@
   "description": "a instant messenger based on Node.js and LeanCloud",
   "main": "node.im.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "DEBUG=Node.im,Node.im:* node bin/cli"
   },
   "bin": "./bin/cli",
   "repository": {
