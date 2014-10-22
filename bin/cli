@@ -5,11 +5,6 @@ var pkg = require('../package.json');
 var NodeIM = require('../node.im');
 var UI = require('../libs/ui');
 
-// UI Events
-UI.on('close', function() {
-  return process.exit(0);
-});
-
 debug(NodeIM.profile);
 
 if (!NodeIM.profile) {

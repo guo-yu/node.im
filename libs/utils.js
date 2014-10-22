@@ -26,14 +26,17 @@ function loadProfile() {
   }
 }
 
-function createProfile(user) {
+function createProfile(user, password) {
   try {
     fs.writeJSON(profilePath, user);
+    fs.updateJSON(profilePath, {
+      password: password
+    });
   } catch (err) {
     throw err;
   }
 }
 
 function createRandomPassword() {
-  return (new Date()).getTime() + (Math.random() * 10);
+  return ((new Date()).getTime() + (Math.random() * 10)).toString();
 }

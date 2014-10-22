@@ -13,8 +13,12 @@ function NodeIM(configs) {
     throw new Error('NodeIM.initInstance(); appId and appKey required');
 
   this.configs = configs;
-  this.LeanCloud = LeanCloud.initialize(this.configs.appId, this.configs.appKey);
   this.profile = utils.loadProfile();
+
+  LeanCloud.initialize(
+    this.configs.LeanCloud.appId, 
+    this.configs.LeanCloud.appKey
+  );
 }
 
 NodeIM.prototype.signup = Signup;
@@ -23,25 +27,29 @@ NodeIM.prototype.signin = Signin;
 function Signup(newbie, callback) {
   var self = this;
 
-  if (!this.LeanCloud)
-    return;
   if (!newbie || (newbie && !newbie.email))
     return;
 
-  var user = new this.LeanCloud.User();
+  newbie.email = newbie.email.toLowerCase();
+
+  var user = new LeanCloud.User();
+  var password = newbie.password || utils.createRandomPassword();
+
   user.set("email", newbie.email);
   user.set("username", newbie.email);
-  user.set("password", newbie.password || createRandomPassword());
+  user.set("password", password);
   if (newbie.mobilePhoneNumber)
     user.setMobilePhoneNumber(newbie.mobilePhoneNumber);
 
+  // Signup new user
   user.signUp(null, {
-    success: function(user) {
+    success: function(member) {
       debug('Signup Successful !');
-      debug(user);
-      utils.createProfile(user);
+      // Save to profile
+      utils.createProfile(member, password);
+
       if (callback)
-        return callback(null, user);
+        return callback(null, member);
     },
     error: function(user, error) {
       debug('Error Code: %s', error.code);
@@ -54,7 +62,8 @@ function Signup(newbie, callback) {
 
 function Signin(callback) {
   var member = this.profile;
-  this.LeanCloud
+
+  LeanCloud
     .User
     .logIn(member.username, member.password, {
       success: function(user) {
