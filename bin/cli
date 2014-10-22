@@ -1,18 +1,24 @@
 #!/usr/bin/env node
 
-var readline = require('readline');
 var debug = require('debug')('Node.im:Cli');
 var pkg = require('../package.json');
 var NodeIM = require('../node.im');
+var UI = require('../libs/ui');
 
-var rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
-
-rl.on('close', function() {
+// UI Events
+UI.on('close', function() {
   return process.exit(0);
 });
 
-var im = new IM(process.argv[2], process.argv[3]);
-return im.init(rl);
+debug(NodeIM.profile);
+
+if (!NodeIM.profile) {
+  return UI.signup(function(err, user) {
+    if (err)
+      return UI.alert(err);
+
+    UI.initMessager(user);
+  });
+}
+
+return UI.initMessager(NodeIM.profile);
