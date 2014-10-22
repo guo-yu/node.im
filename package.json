@@ -1,8 +1,8 @@
 {
   "name": "node.im",
   "version": "0.1.0",
-  "description": "IM based on Node.js and LeanCloud",
-  "main": "index.js",
+  "description": "a instant messenger based on Node.js and LeanCloud",
+  "main": "node.im.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -25,6 +25,8 @@
   },
   "dependencies": {
     "avoscloud-sdk": "^0.4.4",
+    "colors": "^1.0.3",
+    "debug": "^2.1.0",
     "lean-cloud-chat": "^1.0.1"
   }
 }
