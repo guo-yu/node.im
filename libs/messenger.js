@@ -71,7 +71,7 @@ function initMessager(callback) {
     throw new Error('Node.im.Init(); appId is required.');
 
   this.IM = new AVChatClient(this.configs);
-  this.connectService();
+  this.connectService(callback);
 
   return this;
 }

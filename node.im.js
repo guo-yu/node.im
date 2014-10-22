@@ -19,6 +19,11 @@ function NodeIM(configs) {
     this.configs.LeanCloud.appId, 
     this.configs.LeanCloud.appKey
   );
+
+  this.database = LeanCloud;
+  this.messenger = new Messenger(this.profile.objectId);
+  this.messenger.config('appId', this.configs.LeanCloud.appId);
+  this.messenger.init();
 }
 
 NodeIM.prototype.signup = Signup;

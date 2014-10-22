@@ -38,12 +38,10 @@ function signup(callback) {
   });
 }
 
-function alert() {
-
-}
-
-function initMessager() {
-
+function initMessager(profile) {
+  console.log()
+  console.log(indent + 'Node.im'.green + ' 欢迎回来 %s', profile.username);
+  console.log()
 }
 
 function completer() {
@@ -51,4 +49,8 @@ function completer() {
   var hits = completions.filter(function(c) { return c.indexOf(line) == 0 })
   // show all completions if none found
   return [hits.length ? hits : completions, line]
+}
+
+function alert() {
+
 }
