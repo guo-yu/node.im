@@ -34,13 +34,15 @@ function sendMessage(peerId, message, callback) {
   this.IM
     .send(message, peerId)
     .then(
-      function(){
+      function(data){
         debug('Message Send Successful ID: %s', peerId);
+        debug(data);
         if (utils.isFunction(callback))
           return callback(null);
       },
-      function(){
+      function(err){
         debug('Message Send Fail ID: %s', peerId);
+        debug(err);
         if (utils.isFunction(callback))
           return callback(new Error('Node.im.Send(); Message send fail'))
       }

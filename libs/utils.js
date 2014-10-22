@@ -1,7 +1,7 @@
 var fs = require('fsplus');
 var path = require('path');
 var debug = require('debug')('Node.im:Utils');
-var profilePath = path.join(userHome(), '.nodeimrc');
+var profilePath = path.join(userHome(), '.nodeimrc2');
 
 exports.userHome = userHome;
 exports.loadProfile = loadProfile;

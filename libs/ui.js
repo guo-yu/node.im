@@ -45,11 +45,29 @@ function initMessager(profile) {
   console.log()
 
   NodeIM.messenger.on('message', function(data) {
-    console.log(data);
+    debug(data);
+
+    new NodeIM.database.Query(NodeIM.database.User)
+      .equalTo('objectId', data.fromPeerId)
+      .find({
+        success: function(results) {
+          var target = results[0];
+          console.log()
+          console.log(indent + target.get('email').grey + ' %s 说: '.grey, parseDate(data.timestamp));
+          console.log(indent + indent + data.msg);
+        },
+        error: function(error) {
+          console.log(indent + data.msg);
+        }
+      })
+  });
+
+  NodeIM.messenger.IM.watch('').then(function(){
+    debug('Watch %s Success', profile.objectId);
   });
 
   this.rl.on('line', function (str) {
-    NodeIM.messenger.send(profile.objectId, str);
+    NodeIM.messenger.send('', str);
   });
 }
 
@@ -62,4 +80,12 @@ function completer() {
 
 function alert() {
 
+}
+
+function parseDate(timestamp) {
+  var time = new Date(timestamp);
+  return [
+    time.getHours(),
+    time.getMinutes()
+  ].join(':');
 }

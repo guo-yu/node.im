@@ -23,7 +23,10 @@ function NodeIM(configs) {
   );
 
   this.database = LeanCloud;
-  this.messenger = new Messenger(this.profile.objectId);
+
+  if (!this.profile) return;
+  
+  this.messenger = new Messenger(this.profile ? this.profile.objectId : null);
   this.messenger.config('appId', this.configs.LeanCloud.appId);
   this.messenger.init(function(){
     if (self.onReady) self.onReady();
